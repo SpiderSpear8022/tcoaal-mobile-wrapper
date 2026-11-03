@@ -1,0 +1,7 @@
+com.example.rpgmakermobileshell.app-pngs-0 D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\build\generated\res\pngs\debug
+com.example.rpgmakermobileshell.app-updated_navigation_xml-1 D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\build\generated\updated_navigation_xml\debug
+com.example.rpgmakermobileshell.app-packageDebugResources-2 D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.example.rpgmakermobileshell.app-packageDebugResources-3 D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.example.rpgmakermobileshell.app-debug-4 D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.example.rpgmakermobileshell.app-debug-5 D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\debug\res
+com.example.rpgmakermobileshell.app-main-6 D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\res
