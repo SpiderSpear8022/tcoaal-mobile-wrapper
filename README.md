@@ -6,6 +6,23 @@ include the game, its `www` directory, or game scripts, images, audio, fonts, or
 other assets. Provide game files from a copy you are authorized to use. This
 project is not affiliated with the game’s developers or publisher.
 
+## Upstream project credit
+
+- [LlamaToolkit](https://github.com/Llamaware/LlamaToolkit) — its asset
+  decryption workflow was used as the reference for this app's Android asset
+  decryptor. This project contains an Android implementation; it does not
+  bundle or run LlamaToolkit or include its Windows executable.
+- [AndroidX DocumentFile](https://android.googlesource.com/platform/frameworks/support/+/androidx-main/documentfile/)
+  — runtime library dependency used for Android document-provider file access
+  (`androidx.documentfile:documentfile`).
+- [JUnit 4](https://github.com/junit-team/junit4) — test-only dependency
+  (`junit:junit`).
+
+No source files from AndroidX DocumentFile or JUnit are copied into this
+project; they are included as declared dependencies. The app's other
+functionality is implemented in this project, with LlamaToolkit credited above
+as the reference for the asset-decryption workflow.
+
 ## Set up the app
 
 1. Build and install the app as described in [Build](#build), or install a
@@ -59,12 +76,11 @@ optional alternative for assets stored separately; it is not normally needed.
 
 ## Asset preparation
 
-The app implements the asset-decryption portion of the open-source
-[LlamaToolkit](https://github.com/Llamaware/LlamaToolkit) workflow for Android.
-It does not include or run the Windows toolkit executable, and does not run the
-toolkit's DRM-removal or script-deobfuscation commands. Decrypted files are
-created under the player-selected `www/decrypted` folder, not packaged in the
-APK.
+The Android decryptor handles supported encrypted assets from the player's
+selected game folder. It does not run LlamaToolkit's DRM-removal or
+script-deobfuscation commands. Decrypted files are created under the
+player-selected `www/decrypted` folder, not packaged in the APK. See
+[Upstream project credit](#upstream-project-credit).
 
 ## Build
 
