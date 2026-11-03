@@ -1,2 +1,7 @@
-com.example.rpgmakermobileshell:style/AppTheme = 0x7f020000
-com.example.rpgmakermobileshell:string/app_name = 0x7f010000
+com.example.rpgmakermobileshell:style/AppTheme = 0x7f050000
+com.example.rpgmakermobileshell:string/app_name = 0x7f040000
+com.example.rpgmakermobileshell:mipmap/ic_launcher_round = 0x7f030001
+com.example.rpgmakermobileshell:mipmap/ic_launcher = 0x7f030000
+com.example.rpgmakermobileshell:drawable/ic_launcher_foreground = 0x7f020001
+com.example.rpgmakermobileshell:drawable/ic_launcher = 0x7f020000
+com.example.rpgmakermobileshell:color/launcher_background = 0x7f010000

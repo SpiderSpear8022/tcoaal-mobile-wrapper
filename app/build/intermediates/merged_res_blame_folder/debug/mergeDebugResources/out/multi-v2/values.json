@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.rpgmakermobileshell.app-mergeDebugResources-1:/values/values.xml",
+            "outputFile": "C:\\Users\\Administrator\\.gradle\\daemon\\9.3.1\\com.example.rpgmakermobileshell.app-mergeDebugResources-1:\\values\\values.xml",
             "map": [
                 {
                     "source": "D:\\games\\The Coffin of Andy and Leyley\\mobile\\tcoaal-mobile-wrapper\\app\\src\\main\\res\\values\\strings.xml",
@@ -37,6 +37,59 @@
                         "endLines": "8",
                         "endColumns": "12",
                         "endOffsets": "426"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.example.rpgmakermobileshell.app-mergeDebugResources-1:/values/values.xml",
+            "map": [
+                {
+                    "source": "D:\\games\\The Coffin of Andy and Leyley\\mobile\\tcoaal-mobile-wrapper\\app\\src\\main\\res\\values\\strings.xml",
+                    "from": {
+                        "startLines": "-1",
+                        "startColumns": "-1",
+                        "startOffsets": "-1"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "109",
+                        "endColumns": "43",
+                        "endOffsets": "148"
+                    }
+                },
+                {
+                    "source": "D:\\games\\The Coffin of Andy and Leyley\\mobile\\tcoaal-mobile-wrapper\\app\\src\\main\\res\\values\\styles.xml",
+                    "from": {
+                        "startLines": "-1",
+                        "startColumns": "-1",
+                        "startOffsets": "-1"
+                    },
+                    "to": {
+                        "startLines": "4",
+                        "startColumns": "4",
+                        "startOffsets": "153",
+                        "endLines": "9",
+                        "endColumns": "12",
+                        "endOffsets": "480"
+                    }
+                },
+                {
+                    "source": "D:\\games\\The Coffin of Andy and Leyley\\mobile\\tcoaal-mobile-wrapper\\app\\src\\main\\res\\values\\colors.xml",
+                    "from": {
+                        "startLines": "1",
+                        "startColumns": "4",
+                        "startOffsets": "17",
+                        "endColumns": "53",
+                        "endOffsets": "66"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "53",
+                        "endOffsets": "104"
                     }
                 }
             ]

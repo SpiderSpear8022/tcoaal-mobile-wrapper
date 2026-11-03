@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:1:1-18:12
-INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:1:1-18:12
-INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:1:1-18:12
-INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:1:1-18:12
+ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:1:1-20:12
+INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:1:1-20:12
+INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:1:1-20:12
+INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:1:1-20:12
 MERGED from [androidx.documentfile:documentfile:1.0.1] C:\Users\Administrator\.gradle\caches\9.3.1\transforms\35505b59f8a0c8fc31db52cd11636617\workspace\transformed\documentfile-1.0.1\AndroidManifest.xml:17:1-22:12
 	package
 		INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml
@@ -14,38 +14,42 @@ MERGED from [androidx.documentfile:documentfile:1.0.1] C:\Users\Administrator\.g
 	xmlns:android
 		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:1:11-69
 application
-ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:2:5-17:19
-INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:2:5-17:19
+ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:2:5-19:19
+INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:2:5-19:19
 	android:extractNativeLibs
 		INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml
 	android:label
-		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:4:9-41
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:5:9-41
+	android:roundIcon
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:6:9-54
+	android:icon
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:4:9-45
 	android:allowBackup
 		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:3:9-36
 	android:theme
-		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:5:9-40
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:7:9-40
 	android:usesCleartextTraffic
-		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:6:9-45
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:8:9-45
 activity#com.example.rpgmakermobileshell.MainActivity
-ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:7:9-16:20
+ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:9:9-18:20
 	android:screenOrientation
-		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:11:13-56
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:13:13-56
 	android:exported
-		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:10:13-36
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:12:13-36
 	android:configChanges
-		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:9:13-74
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:11:13-74
 	android:name
-		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:8:13-41
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:10:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:12:13-15:29
+ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:14:13-17:29
 action#android.intent.action.MAIN
-ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:13:17-69
+ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:15:17-69
 	android:name
-		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:13:25-66
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:15:25-66
 category#android.intent.category.LAUNCHER
-ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:14:17-77
+ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:16:17-77
 	android:name
-		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:14:27-74
+		ADDED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml:16:27-74
 uses-sdk
 INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\games\The Coffin of Andy and Leyley\mobile\tcoaal-mobile-wrapper\app\src\main\AndroidManifest.xml
