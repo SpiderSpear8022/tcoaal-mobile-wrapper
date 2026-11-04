@@ -76,8 +76,13 @@ optional alternative for assets stored separately; it is not normally needed.
 
 ## Asset preparation
 
-The Android decryptor handles supported encrypted assets from the player's
-selected game folder. It does not run LlamaToolkit's DRM-removal or
+The Android decryptor streams supported encrypted assets instead of loading
+entire files into memory. It records completed files in
+`www/decrypted/.tcoaal-decryption-manifest-v1.txt`, so interrupted preparation
+can resume and partial outputs are not treated as a finished asset set.
+Temporary `.tcoaal-part-*` files are replaced only after a file is finalized.
+
+The Android decryptor does not run LlamaToolkit's DRM-removal or
 script-deobfuscation commands. Decrypted files are created under the
 player-selected `www/decrypted` folder, not packaged in the APK. See
 [Upstream project credit](#upstream-project-credit).

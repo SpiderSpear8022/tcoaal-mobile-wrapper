@@ -2,7 +2,9 @@ package com.example.rpgmakermobileshell;
 
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -40,6 +42,21 @@ public final class LlamaAssetDecryptorTest {
 
         assertArrayEquals(plain, result.data);
         assertEquals(".png", result.extension);
+    }
+
+    @Test
+    public void decryptsStreamWithoutLoadingTheWholeFile() throws IOException {
+        byte[] plain = pngData();
+        ByteArrayInputStream input = new ByteArrayInputStream(
+                encrypt(plain, "asset-name", 0));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        LlamaAssetDecryptor.Result result = LlamaAssetDecryptor.decryptStream(
+                input, output, "asset-name");
+
+        assertArrayEquals(plain, output.toByteArray());
+        assertEquals(".png", result.extension);
+        assertTrue(result.encrypted);
     }
 
     @Test

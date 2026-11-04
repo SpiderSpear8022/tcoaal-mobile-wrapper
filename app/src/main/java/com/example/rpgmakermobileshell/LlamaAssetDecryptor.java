@@ -3,6 +3,9 @@ package com.example.rpgmakermobileshell;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -26,6 +29,98 @@ final class LlamaAssetDecryptor {
     }
 
     private LlamaAssetDecryptor() {
+    }
+
+    static Result decryptStream(InputStream input, OutputStream output, String fileName)
+            throws IOException {
+        byte[] prefix = new byte[SIGNATURE.length + 1];
+        int prefixRead = readFully(input, prefix, 0, prefix.length);
+        if (prefixRead < SIGNATURE.length || !isSignature(prefix, SIGNATURE.length)) {
+            output.write(prefix, 0, prefixRead);
+            copyStream(input, output);
+            byte[] plainPrefix = Arrays.copyOf(prefix, Math.min(prefixRead, 64));
+            return new Result(plainPrefix, false, guessExtension(plainPrefix));
+        }
+
+        int bodyLengthByte = prefixRead == prefix.length ? prefix[SIGNATURE.length] & 0xff : 0;
+        byte[] firstBuffer = new byte[32 * 1024];
+        ByteArrayCollector prefixCollector = new ByteArrayCollector(64);
+        int rollingMask = (mask(fileName) + 1) & 0xff;
+        boolean lengthUnlimited = bodyLengthByte == 0;
+        int encryptedLeft = lengthUnlimited ? Integer.MAX_VALUE : bodyLengthByte;
+        long plainBytes = 0;
+
+        int bytesRead;
+        while ((bytesRead = input.read(firstBuffer)) != -1) {
+            for (int i = 0; i < bytesRead; i++) {
+                byte cipher = firstBuffer[i];
+                if (encryptedLeft > 0) {
+                    firstBuffer[i] = (byte) ((cipher & 0xff) ^ rollingMask);
+                    rollingMask = ((rollingMask << 1) ^ (cipher & 0xff)) & 0xff;
+                    encryptedLeft--;
+                }
+            }
+            prefixCollector.add(firstBuffer, bytesRead);
+            output.write(firstBuffer, 0, bytesRead);
+            plainBytes += bytesRead;
+        }
+
+        byte[] plainPrefix = prefixCollector.toByteArray();
+        return new Result(plainPrefix, true, guessExtension(plainPrefix));
+    }
+
+    private static boolean isSignature(byte[] data, int length) {
+        if (data.length < length) {
+            return false;
+        }
+        for (int i = 0; i < length; i++) {
+            if (data[i] != SIGNATURE[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static int readFully(InputStream input, byte[] target, int offset, int length)
+            throws IOException {
+        int total = 0;
+        while (total < length) {
+            int read = input.read(target, offset + total, length - total);
+            if (read == -1) {
+                break;
+            }
+            total += read;
+        }
+        return total;
+    }
+
+    private static void copyStream(InputStream input, OutputStream output) throws IOException {
+        byte[] buffer = new byte[32 * 1024];
+        int bytesRead;
+        while ((bytesRead = input.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
+    }
+
+    private static final class ByteArrayCollector {
+        private final byte[] data;
+        private int size;
+
+        ByteArrayCollector(int maxSize) {
+            data = new byte[maxSize];
+        }
+
+        void add(byte[] source, int length) {
+            int count = Math.min(length, data.length - size);
+            if (count > 0) {
+                System.arraycopy(source, 0, data, size, count);
+                size += count;
+            }
+        }
+
+        byte[] toByteArray() {
+            return Arrays.copyOf(data, size);
+        }
     }
 
     static Result decrypt(byte[] input, String fileName) {

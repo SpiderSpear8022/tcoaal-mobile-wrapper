@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.rpgmakermobileshell.LlamaAssetDecryptorTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-03T09:33:51.161Z" hostname="DESKTOP-EEVB3DT" time="0.029">
+<testsuite name="com.example.rpgmakermobileshell.LlamaAssetDecryptorTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-04T07:28:12.069Z" hostname="DESKTOP-EEVB3DT" time="0.015">
   <properties/>
-  <testcase name="decryptsPngUsingOriginalFilename" classname="com.example.rpgmakermobileshell.LlamaAssetDecryptorTest" time="0.021"/>
-  <testcase name="preservesUnencryptedFilesWithoutAddingAnExtension" classname="com.example.rpgmakermobileshell.LlamaAssetDecryptorTest" time="0.001"/>
+  <testcase name="decryptsPngUsingOriginalFilename" classname="com.example.rpgmakermobileshell.LlamaAssetDecryptorTest" time="0.005"/>
+  <testcase name="preservesUnencryptedFilesWithoutAddingAnExtension" classname="com.example.rpgmakermobileshell.LlamaAssetDecryptorTest" time="0.0"/>
   <testcase name="recoversPngSeedWhenFilenameDoesNotMatch" classname="com.example.rpgmakermobileshell.LlamaAssetDecryptorTest" time="0.0"/>
   <testcase name="leavesTheUnencryptedTailUntouched" classname="com.example.rpgmakermobileshell.LlamaAssetDecryptorTest" time="0.0"/>
+  <testcase name="decryptsStreamWithoutLoadingTheWholeFile" classname="com.example.rpgmakermobileshell.LlamaAssetDecryptorTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

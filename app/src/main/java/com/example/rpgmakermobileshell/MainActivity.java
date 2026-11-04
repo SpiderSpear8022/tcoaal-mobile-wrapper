@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,6 +60,8 @@ public final class MainActivity extends Activity {
     private static final String TREE_URI = "tree_uri";
     private static final String ASSETS_TREE_URI = "assets_tree_uri";
     private static final String DECRYPTED_DIRECTORY = "decrypted";
+    private static final String DECRYPTION_MANIFEST = ".tcoaal-decryption-manifest-v1.txt";
+    private static final String DECRYPTION_COMPLETE_MARKER = "COMPLETE";
     private static final String LANGUAGE_DATA_PATH = "data/9c7050ae76645487";
     private static final String MOBILE_PLUGIN_PATH = "js/plugins/MobileTextFix.js";
     private static final String MOBILE_LANGUAGE_PATH = "mobile-language.json";
@@ -491,49 +494,120 @@ public final class MainActivity extends Activity {
         for (AssetSource source : sources) {
             totalBytes += Math.max(1, source.file.length());
         }
+        LinkedHashMap<String, DecryptionManifestEntry> manifest = readDecryptionManifest(outputRoot);
         long completedBytes = 0;
         ArrayList<String> failures = new ArrayList<>();
         DecryptionSummary summary = new DecryptionSummary();
         Map<String, DocumentFile> outputDirectories = new HashMap<>();
         outputDirectories.put("", outputRoot);
+        long bytesSinceManifestWrite = 0;
 
         for (int i = 0; i < sources.size(); i++) {
             AssetSource source = sources.get(i);
             long fileBytes = Math.max(1, source.file.length());
+            String sourceName = source.file.getName();
             try {
-                String sourceName = source.file.getName();
                 if (sourceName == null || sourceName.isEmpty()) {
                     throw new IOException("An asset has no filename.");
                 }
-                byte[] input = readDocument(source.file);
-                LlamaAssetDecryptor.Result result = LlamaAssetDecryptor.decrypt(input, sourceName);
-                String outputName = sourceName + result.extension;
+                String sourceRelative = source.relativeDirectory.isEmpty()
+                        ? sourceName
+                        : source.relativeDirectory + "/" + sourceName;
+                DecryptionManifestEntry existing = manifest.get(sourceRelative);
+                if (existing != null
+                        && existing.sourceLength == Math.max(1, source.file.length())
+                        && existing.sourceLastModified == source.file.lastModified()) {
+                    DocumentFile existingOutput = findFile(outputRoot, existing.outputRelative);
+                    if (existingOutput != null && existingOutput.isFile()
+                            && existingOutput.length() == existing.outputLength
+                            && existingOutput.length() > 0) {
+                        completedBytes += fileBytes;
+                        summary.copied++;
+                        reportAssetProgress(progressListener, completedBytes, totalBytes,
+                                i + 1, sources.size(), sourceName, "Resuming");
+                        continue;
+                    }
+                }
+
                 DocumentFile outputDirectory = ensureOutputDirectory(
                         outputRoot, source.relativeDirectory, outputDirectories);
-                writeDocument(outputDirectory, outputName, result.data);
+                DocumentFile temp = findDirectChild(outputDirectory,
+                        ".tcoaal-part-" + i);
+                if (temp != null) {
+                    temp.delete();
+                }
+                temp = outputDirectory.createFile("application/octet-stream",
+                        ".tcoaal-part-" + i);
+                if (temp == null) {
+                    throw new IOException("Android could not create a temporary output file.");
+                }
+
+                InputStream input = getContentResolver().openInputStream(source.file.getUri());
+                if (input == null) {
+                    temp.delete();
+                    throw new IOException("Android could not open the selected asset.");
+                }
+                OutputStream output = getContentResolver().openOutputStream(temp.getUri(), "wt");
+                if (output == null) {
+                    input.close();
+                    temp.delete();
+                    throw new IOException("Android could not write the temporary output file.");
+                }
+                LlamaAssetDecryptor.Result result;
+                try (InputStream sourceStream = input; OutputStream targetStream = output) {
+                    result = LlamaAssetDecryptor.decryptStream(sourceStream, targetStream, sourceName);
+                }
+
+                String outputName = sourceName + result.extension;
+                String outputRelative = source.relativeDirectory.isEmpty()
+                        ? outputName
+                        : source.relativeDirectory + "/" + outputName;
+                DocumentFile finalOutput = findDirectChild(outputDirectory, outputName);
+                if (finalOutput != null && finalOutput.isDirectory()) {
+                    temp.delete();
+                    throw new IOException("A directory conflicts with output file " + outputName + ".");
+                }
+                if (finalOutput != null) {
+                    finalOutput.delete();
+                }
+                if (!temp.renameTo(outputName)) {
+                    temp.delete();
+                    throw new IOException("Android could not finalize output file " + outputName + ".");
+                }
+                finalOutput = findDirectChild(outputDirectory, outputName);
+                if (finalOutput == null || !finalOutput.isFile() || finalOutput.length() <= 0) {
+                    throw new IOException("The output file is missing or empty: " + outputName);
+                }
+
+                manifest.put(sourceRelative, new DecryptionManifestEntry(
+                        source.file.length(), source.file.lastModified(),
+                        outputRelative, finalOutput.length()));
+                bytesSinceManifestWrite += finalOutput.length();
+                if (manifest.size() % 50 == 0 || bytesSinceManifestWrite >= 64L * 1024 * 1024) {
+                    writeDecryptionManifest(outputRoot, manifest, false);
+                    bytesSinceManifestWrite = 0;
+                }
                 if (result.encrypted) {
                     summary.decrypted++;
                 } else {
                     summary.copied++;
                 }
             } catch (IOException | SecurityException exception) {
-                failures.add(source.file.getName() + ": " + exception.getMessage());
+                failures.add(sourceName + ": " + exception.getMessage());
                 Log.w(TAG, "Could not prepare game asset " + source.file.getUri(), exception);
             }
 
             completedBytes += fileBytes;
-            int value = (int) Math.min(1000, completedBytes * 1000 / Math.max(1, totalBytes));
-            int completedFiles = i + 1;
-            String fileName = source.file.getName() == null ? "asset" : source.file.getName();
-            progressListener.onProgress(new AssetProgress(value,
-                    "Processing asset " + completedFiles + " of " + sources.size()
-                            + ": " + fileName));
+            reportAssetProgress(progressListener, completedBytes, totalBytes,
+                    i + 1, sources.size(), sourceName == null ? "asset" : sourceName,
+                    failures.isEmpty() ? "Processing" : "Retrying");
         }
 
         if (!failures.isEmpty()) {
             throw new IOException("Failed to prepare " + failures.size() + " asset(s). "
                     + failures.get(0));
         }
+        writeDecryptionManifest(outputRoot, manifest, true);
         return summary;
     }
 
@@ -671,6 +745,116 @@ public final class MainActivity extends Activity {
         int copied;
     }
 
+    private static final class DecryptionManifestEntry {
+        final long sourceLength;
+        final long sourceLastModified;
+        final String outputRelative;
+        final long outputLength;
+
+        DecryptionManifestEntry(long sourceLength, long sourceLastModified,
+                                String outputRelative, long outputLength) {
+            this.sourceLength = sourceLength;
+            this.sourceLastModified = sourceLastModified;
+            this.outputRelative = outputRelative;
+            this.outputLength = outputLength;
+        }
+    }
+
+    private void reportAssetProgress(AssetProgressListener listener, long completedBytes,
+                                     long totalBytes, int completedFiles, int totalFiles,
+                                     String fileName, String phase) {
+        int value = (int) Math.min(1000, completedBytes * 1000 / Math.max(1, totalBytes));
+        listener.onProgress(new AssetProgress(value,
+                phase + " asset " + completedFiles + " of " + totalFiles + ": " + fileName));
+    }
+
+    private LinkedHashMap<String, DecryptionManifestEntry> readDecryptionManifest(
+            DocumentFile outputRoot) throws IOException {
+        LinkedHashMap<String, DecryptionManifestEntry> entries = new LinkedHashMap<>();
+        DocumentFile manifestFile = findDirectChild(outputRoot, DECRYPTION_MANIFEST);
+        if (manifestFile == null || !manifestFile.isFile()) {
+            return entries;
+        }
+        byte[] contents;
+        try (InputStream input = getContentResolver().openInputStream(manifestFile.getUri())) {
+            if (input == null) {
+                throw new IOException("Android could not read the decryption progress file.");
+            }
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            byte[] buffer = new byte[16 * 1024];
+            int read;
+            while ((read = input.read(buffer)) != -1) {
+                output.write(buffer, 0, read);
+            }
+            contents = output.toByteArray();
+        }
+        String text = new String(contents, StandardCharsets.UTF_8);
+        for (String line : text.split("\\n")) {
+            if (line.isEmpty() || line.equals(DECRYPTION_COMPLETE_MARKER)
+                    || line.startsWith(DECRYPTION_COMPLETE_MARKER + "\t")) {
+                continue;
+            }
+            String[] fields = line.split("\\t", -1);
+            if (fields.length == 5) {
+                try {
+                    entries.put(fields[0], new DecryptionManifestEntry(
+                            Long.parseLong(fields[1]), Long.parseLong(fields[2]),
+                            fields[3], Long.parseLong(fields[4])));
+                } catch (NumberFormatException ignored) {
+                    Log.w(TAG, "Ignoring an invalid decryption progress entry.");
+                }
+            }
+        }
+        return entries;
+    }
+
+    private boolean isDecryptionManifestComplete(DocumentFile outputRoot) {
+        DocumentFile manifestFile = findDirectChild(outputRoot, DECRYPTION_MANIFEST);
+        if (manifestFile == null || !manifestFile.isFile()) {
+            return false;
+        }
+        try (InputStream input = getContentResolver().openInputStream(manifestFile.getUri())) {
+            if (input == null) {
+                return false;
+            }
+            byte[] buffer = new byte[4096];
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            int read;
+            while ((read = input.read(buffer)) != -1) {
+                output.write(buffer, 0, read);
+            }
+            String text = new String(output.toByteArray(), StandardCharsets.UTF_8);
+            for (String line : text.split("\\n")) {
+                if (line.equals(DECRYPTION_COMPLETE_MARKER)
+                        || line.startsWith(DECRYPTION_COMPLETE_MARKER + "\t")) {
+                    return true;
+                }
+            }
+        } catch (IOException | SecurityException exception) {
+            Log.w(TAG, "Unable to read decryption completion marker.", exception);
+        }
+        return false;
+    }
+
+    private void writeDecryptionManifest(DocumentFile outputRoot,
+                                         LinkedHashMap<String, DecryptionManifestEntry> entries,
+                                         boolean complete) throws IOException {
+        StringBuilder text = new StringBuilder();
+        if (complete) {
+            text.append(DECRYPTION_COMPLETE_MARKER).append('\t').append(entries.size()).append('\n');
+        }
+        for (Map.Entry<String, DecryptionManifestEntry> entry : entries.entrySet()) {
+            DecryptionManifestEntry value = entry.getValue();
+            text.append(entry.getKey()).append('\t')
+                    .append(value.sourceLength).append('\t')
+                    .append(value.sourceLastModified).append('\t')
+                    .append(value.outputRelative).append('\t')
+                    .append(value.outputLength).append('\n');
+        }
+        writeDocument(outputRoot, DECRYPTION_MANIFEST,
+                text.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
     private String readLanguagePack(DocumentFile assetsRoot) throws IOException {
         DocumentFile file = findFile(assetsRoot, LANGUAGE_DATA_PATH);
         if (file == null || !file.isFile()) {
@@ -772,6 +956,11 @@ public final class MainActivity extends Activity {
             }
             if (findFile(root, LANGUAGE_DATA_PATH) == null) {
                 missingFiles.add("English language data (data/9c7050ae76645487)");
+            }
+            DocumentFile manifest = findDirectChild(root, DECRYPTION_MANIFEST);
+            boolean internallyGenerated = DECRYPTED_DIRECTORY.equalsIgnoreCase(root.getName());
+            if ((manifest != null || internallyGenerated) && !isDecryptionManifestComplete(root)) {
+                missingFiles.add("Complete asset preparation (previous attempt was interrupted)");
             }
         } catch (SecurityException exception) {
             Log.w(TAG, "Unable to inspect the selected decrypted assets folder.", exception);
